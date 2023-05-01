@@ -1,17 +1,20 @@
 pipeline {
     agent any
     tools{
-        go 'go1.20'
+        go '1.20'
     }
     environment {
         GO114MODULE = 'on'
         CGO_ENABLED = 0 
-        GOPATH = `${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}`
+        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
         DOCKERHUB = "vkunal"
     }
     stages {
         stage('Checkout') {
-            checkout scm
+            steps {
+                echo 'Checking out the code'
+                git 'https://github.com/verma-kunal/Go-REST-API.git'
+            }
         }
         stage('Pre Test') {
             steps {
@@ -34,10 +37,12 @@ pipeline {
             }
         }
         stage('SonarQube Code analysis') {
-            def scannerHome = tool 'SonarScanner 4.0';
             steps {
-                withSonarQubeEnv('sonarqube-server') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                script {
+                    def scannerHome = tool 'SonarScanner 4.8';
+                    withSonarQubeEnv('sonarqube-server') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
                 }
             }
             // send alerts/notification:
@@ -66,8 +71,8 @@ pipeline {
         stage('Push Docker image') {
             steps {
                 withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKERHUB')]) {
-                    sh 'docker login -u $DOCKERHUB'
-                    sh 'docker push $DOCKERHUB/go-app'
+                    sh "docker login -u ${DOCKERHUB}"
+                    sh "docker push ${DOCKERHUB}/go-app"
                 }
             }
         }
