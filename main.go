@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.com/devops-projects6943118/go-rest-api/src/albums"
+	"github.com/verma-kunal/Go-REST-API/src/albums"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"gitlab.com/devops-projects6943118/go-rest-api/src"
+	"github.com/verma-kunal/Go-REST-API/src"
 )
 
 // add a new album - from JSON received:
