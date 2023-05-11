@@ -4,11 +4,11 @@ FROM golang:1.20.3-bullseye
 WORKDIR /app
 
 # Cache and install dependencies
-COPY ./src/go.mod ./src/go.mod ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy app files
-COPY ./src/ .
+COPY . .
 
 # This container exposes port 3000 to the outside world
 EXPOSE 3000

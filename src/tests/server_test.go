@@ -1,5 +1,4 @@
-package main
-
+package tests
 
 import (
 	"bytes"
@@ -7,9 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"github.com/stretchr/testify/assert"
 	"github.com/gin-gonic/gin"
-
+	"github.com/stretchr/testify/assert"
+	"gitlab.com/devops-projects6943118/go-rest-api/src"
+	"gitlab.com/devops-projects6943118/go-rest-api/src/albums"
 )
 
 // For getting the list of albums:
@@ -17,7 +17,7 @@ func TestGetAlbums(t *testing.T) {
 
 	// create a new Gin router & register the "getAlbums" function:
 	router := gin.Default()
-	router.GET("/albums", getAlbums)
+	router.GET("/albums", albums.GetAlbums)
 
 	// creates a new HTTP GET request with the path "/albums"
 	req, err := http.NewRequest("GET", "/albums", nil)
@@ -32,7 +32,7 @@ func TestGetAlbums(t *testing.T) {
 
 	// json.NewDecoder - creates a new JSON decoder that will read from the response body in "resp"
 	// Decode - converts the JSON response back to the slice (deserialized)
-	var albums []album
+	var albums []src.Album
 	err = json.NewDecoder(resp.Body).Decode(&albums)
 	assert.NoError(t, err)
 
@@ -43,10 +43,10 @@ func TestGetAlbums(t *testing.T) {
 // for adding a new album:
 func TestPostAlbums(t *testing.T) {
 	router := gin.Default()
-	router.POST("/albums", postAlbums)
+	router.POST("/albums", albums.PostAlbums)
 
 	// create a new album to post to the server:
-	newAlbum := album{
+	newAlbum := src.Album{
 		ID:     "4",
 		Title:  "Test",
 		Artist: "Kunal Verma",
@@ -68,7 +68,7 @@ func TestPostAlbums(t *testing.T) {
 	// check for the equality of status codes:
 	assert.Equal(t, http.StatusCreated, resp.Code)
 
-	var createdAlbum album
+	var createdAlbum src.Album
 	err = json.NewDecoder(resp.Body).Decode(&createdAlbum)
 	assert.NoError(t, err)
 
